@@ -19,14 +19,30 @@ include Taggar
 
 enable :sessions
 
+# STRUKTUR (ctrl+f)
+# 1. Förstasidan
+# 2. Routes för användare
+# 2.1 Logga in
+# 2.2 Skapa konto
+# 2.3 Logga ut
+# 2.4 Radera konto
+# 2.5 Visa konto
+# 3. Routes för todos
+
 # Visar förstasidan
 #
+# @see Todo#hämta_alla_för_användare
+# @see Användare#hämta_top_10
 get '/' do
-  todos = Todo.hämta_alla
+  todos = auth? ? Todo.hämta_alla_för_användare(false, användare) : []
   users = Användare.hämta_top_10
 
   slim :index, locals: { top_users: users, my_todos: todos }
 end
+
+# 2. Routes för användare
+
+# 2.1 Logga in
 
 # Visar inloggningssidan
 #
@@ -38,6 +54,9 @@ end
 #
 # @param [String] namn
 # @param [String] lösenord
+#
+# @see Användare#verifiera_kredentialer
+# @see Användare#logga_in
 post '/konto/logga-in' do
   namn = params[:namn]
   lösenord = params[:lösenord]
@@ -68,6 +87,8 @@ post '/konto/logga-in' do
   redirect '/'
 end
 
+# 2.2 Skapa konto
+
 # Visar skapa konto sidan
 get '/skapa-konto' do
   slim :"konto/skapa-konto"
@@ -77,6 +98,10 @@ end
 #
 # @param [String] namn
 # @param [String] lösenord
+#
+# @see Användare#verifiera_kredentialer
+# @see Användare#registrera
+# @see Användare#logga_in
 post '/konto/skapa-konto' do
   namn = params[:namn]
   lösenord = params[:lösenord]
@@ -110,6 +135,8 @@ post '/konto/skapa-konto' do
   redirect '/'
 end
 
+# 2.3 Logga ut
+
 # loggar ut användaren
 #
 post '/konto/logga-ut' do
@@ -117,11 +144,15 @@ post '/konto/logga-ut' do
   redirect '/'
 end
 
+# 2.4 Radera konto
+
 # Raderar ett konto
 #
 # @param [String] id
 post '/konto/:id/radera' do
 end
+
+# 2.5 Visa konto
 
 # om url är /konto/hejhej, gå till användaren hejhejs profil
 # om url är /konto/ eller /konto och användaren är utloggad,
@@ -135,8 +166,11 @@ end
 # Visar kontosidan för en användare
 #
 # @param [String] splat
+# @see Användare#hämta
 get '/konto*' do |splat|
   anv = Användare.hämta(splat.split('/')[1] || användare['namn'])
 
   slim :"konto/visa", locals: { user: anv }
 end
+
+# 3. Routes för todos
