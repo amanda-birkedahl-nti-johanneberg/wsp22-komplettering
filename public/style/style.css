@@ -1,5 +1,5 @@
 body {
-    margin: unset;
+  margin: unset;
 }
 
 header {
@@ -17,4 +17,24 @@ header {
 .sida {
   max-width: 1170px;
   margin: auto;
+  margin-top: 2rem;
+}
+
+.title {
+  text-decoration: none;
+  color: black;
+}
+
+.username {
+    font-weight: normal;
+}
+
+.formulär {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+}
+
+.error {
+  color: red;
 }

@@ -1,0 +1,10 @@
+main.sida
+    h2 Skapa konto
+    p.error = session[:skapa_konto_fel]
+    form.formulär action="konto/skapa-konto" method="post" 
+        label for="namn" Användarnamn 
+        input#namn type="text" name="namn"/
+        label for="lösenord" Lösenord 
+        input#lösenord type="password" name="lösenord"/
+        input type="submit" value="Skapa konto"/
+    a href="/logga-in" Eller logga in

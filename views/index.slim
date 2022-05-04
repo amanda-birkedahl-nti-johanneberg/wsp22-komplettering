@@ -1,2 +1,16 @@
 main.sida
-    p hej
+    - if auth?
+        section
+            h2 Skapa ny TODO
+    
+        section
+            h2 Mina TODOS
+            
+    - else
+        section
+            p <a>Logga in</a> för att skapa och visa dina TODOS
+    section 
+        h2 Användare med mest TODOS
+        ol
+            - top_users.each do |user|
+                li <a href="/konto/#{user['namn']}">#{user["namn"]}</a>: #{user["avklarade"]} klarade, #{user["misslyckade"]} misslyckade

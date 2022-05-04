@@ -1,0 +1,19 @@
+main.sida
+    h2.username = user["namn"]
+    - if auth? && (jag?(user) || (användare["admin"] == 1))
+        section
+            h3 Åtgärder
+            div
+                - if jag?(user)
+                    form action="/konto/logga-ut" method="post" 
+                        input type="submit" value="Logga ut"/
+                - unless jag?(user)
+                    form action="/konto/radera" method="post" 
+                        input type="submit" value="Radera konto"/
+
+    section 
+        h3 Statistik
+        ul 
+            li Avklarade Todo:s => #{user["avklarade"]}
+            li Misslyckade Todo:s => #{user["misslyckade"]}
+        
