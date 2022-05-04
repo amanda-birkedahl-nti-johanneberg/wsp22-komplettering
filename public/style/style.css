@@ -1,0 +1,20 @@
+body {
+    margin: unset;
+}
+
+header {
+  margin: auto;
+  max-width: 1170px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px gray solid;
+  border-top: none;
+  padding: 0 2rem;
+}
+
+.sida {
+  max-width: 1170px;
+  margin: auto;
+}
