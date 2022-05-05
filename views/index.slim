@@ -1,11 +1,27 @@
-main.sida
+main.sida#main-grid
     - if auth?
         section
             h2 Skapa ny TODO
-    
-        section
+            == slim :"todo/skapa_todo_form"
+        section#todos-section
             h2 Mina TODOS
-            
+            div
+                - my_todos.each do |todo|
+                    article.todo
+                        div.todo-actions
+                            h4 = todo["titel"]
+                            form action="/todo/#{todo["id"]}/radera" method="post" 
+                                input type="submit" value="Radera todo"
+                        
+                        - todo["punkter"].each_with_index do |punkt, index|
+                            - if punkt["klar"]
+                                    p.punkt-klar = punkt["etikett"]
+                            - else
+                                form.punk-action action="/todo/#{todo["id"]}/punkt/#{index}" method="post"
+                                    input type="submit" value="Klar"/
+                                    p = punkt["etikett"]
+                            
+
     - else
         section
             p <a>Logga in</a> för att skapa och visa dina TODOS

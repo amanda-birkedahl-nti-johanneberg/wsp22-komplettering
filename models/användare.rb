@@ -6,6 +6,8 @@ LOGGA_IN_FEL = { error: 'Användarnamnet eller lösenordet är fel', user: nil }
 #
 module Användare
   # hämtar de 10 bästa användarna
+  #
+  # @return [Array<Hash>]
   def hämta_top_10
     db.execute('SELECT namn, id, avklarade, misslyckade FROM users ORDER BY avklarade DESC LIMIT 10')
   end
@@ -69,10 +71,10 @@ module Användare
   #
   # @param [String] namn
   # @return [Hash, nil] användare
-  def hämta(namn)
-    return nil unless existerar?(namn)
+  def hämta_med_namn(namn)
+    return false unless existerar?(namn)
 
-    db.execute('SELECT id, misslyckade, admin, avklarade, namn FROM users WHERE namn = ?', namn)[0]
+    användare = db.execute('SELECT id, misslyckade, admin, avklarade, namn FROM users WHERE namn = ?', namn)[0]
   end
 
   def admin?(namn)

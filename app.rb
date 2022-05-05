@@ -28,6 +28,10 @@ enable :sessions
 # 2.4 Radera konto
 # 2.5 Visa konto
 # 3. Routes för todos
+# 3.1 Visa todo
+# 3.2 Skapa todo
+# 3.3 Uppdatera punkt
+# 3.4 Raderar todo
 
 # Visar förstasidan
 #
@@ -168,9 +172,72 @@ end
 # @param [String] splat
 # @see Användare#hämta
 get '/konto*' do |splat|
-  anv = Användare.hämta(splat.split('/')[1] || användare['namn'])
+  path = splat.split('/')[1]
+  p Användare.hämta_med_namn(användare['namn']), användare
+  anv = path.nil? ? Användare.hämta_med_namn(användare['namn']) : Användare.hämta_med_namn(path)
 
   slim :"konto/visa", locals: { user: anv }
 end
 
 # 3. Routes för todos
+
+# 3.1 Visa todo
+
+# 3.2 Skapa todo
+before '/todo' do
+  redirect '/' unless auth?
+end
+
+# Skapar en todo
+#
+# @param [String] titel
+# @param [Hash] punkter
+# @see Todo#skapa
+post '/todo' do
+  params = JSON.parse(request.body.read)
+  redirect '/' if params['titel'].length < 3
+
+  titel = params['titel']
+  punkter = params['punkter']
+
+  resultat = Todo.skapa(titel, punkter, användare)
+
+  status 200
+  redirect '/'
+end
+
+before '/todo/:id/*' do |id, _splat|
+  return redirect '/logga-in' unless auth?
+
+  Todo.har_tillåtelse(id.to_i, användare)
+end
+
+# 3.3 Uppdatera punkt
+
+# Uppdaterar statusen på en punkt
+#
+# @param [String] id todons id
+# @param [String] punkt punktens index
+# @see Todo#hämta
+# @see Todo#uppdatera
+post '/todo/:id/punkt/:punkt' do |id, punkt|
+  todo = Todo.hämta(id.to_i)
+  todo['punkter'][punkt.to_i]['klar'] = true
+  Todo.uppdatera(id.to_i, todo['punkter'])
+
+  redirect '/'
+end
+
+# 3.4 Raderar todo
+
+# Radera en todo
+#
+# @param [String] id todons id
+post '/todo/:id/radera' do |id|
+  id = id.to_i
+
+  Todo.radera(id)
+
+  status 204
+  redirect '/'
+end
