@@ -1,9 +1,18 @@
 form.formulär#todo-form action="/todo" method="post"
     label for="titel" Titel
-    input#titel type="text" name="Titel"
+    input#titel required=true type="text" name="Titel"
     div.point-row
         i.material-icons.icon-button#skapa-punkt add
         p Saker att göra
     div#punkter
+
+    section
+        h4 Taggar
+        div#taggar
+            - Taggar.hämta_alla.each do |tagg|
+                div
+                    input type="checkbox" name="taggar" value="#{tagg['id']}"/
+                     label = tagg["titel"]
+
     input type="submit" value="Skapa"
 script src="/js/todo-form.js" 

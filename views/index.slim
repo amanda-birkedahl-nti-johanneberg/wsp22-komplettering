@@ -6,13 +6,19 @@ main.sida#main-grid
         section#todos-section
             h2 Mina TODOS
             div
-                - my_todos.each do |todo|
+                - my_todos.each do |todo_data|
+                    - todo = todo_data[:todo]
+                    - taggar = todo_data[:taggar]
                     article.todo
                         div.todo-actions
                             h4 = todo["titel"]
                             form action="/todo/#{todo["id"]}/radera" method="post" 
                                 input type="submit" value="Radera todo"
                         
+                        div
+                            - taggar.each do |tagg|
+                                p = tagg["namn"]
+                                
                         - todo["punkter"].each_with_index do |punkt, index|
                             - if punkt["klar"]
                                     p.punkt-klar = punkt["etikett"]

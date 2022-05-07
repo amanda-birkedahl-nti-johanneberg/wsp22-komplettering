@@ -84,3 +84,20 @@ header {
     justify-content: space-between;
     align-items: center;
 }
+
+.tagg-sak {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tagg-sak::before {
+  content: '*';
+}
+#taggar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 1rem 0;
+
+}

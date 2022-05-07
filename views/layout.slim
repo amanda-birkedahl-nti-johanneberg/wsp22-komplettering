@@ -16,6 +16,8 @@ html lang="en"
             nav
                 - if auth?
                     a href="/konto" Hej #{användare["namn"]} #{användare["admin"] == 1 ? "(admin)" : ""}
+                    - if användare["admin"] == 1
+                        a href="/taggar" Hantera taggar
                 - else
                     a href="/logga-in" Logga in
         == yield

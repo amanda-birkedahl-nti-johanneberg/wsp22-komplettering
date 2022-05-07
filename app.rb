@@ -32,6 +32,10 @@ enable :sessions
 # 3.2 Skapa todo
 # 3.3 Uppdatera punkt
 # 3.4 Raderar todo
+# 4 Routes för taggar
+# 4.1 Visa alla taggar
+# 4.2 Skapa en tagg
+# 4.3 Radera en tagg
 
 # Visar förstasidan
 #
@@ -169,11 +173,10 @@ end
 
 # Visar kontosidan för en användare
 #
-# @param [String] splat
+# @param [String] splat resten av strängen
 # @see Användare#hämta
 get '/konto*' do |splat|
   path = splat.split('/')[1]
-  p Användare.hämta_med_namn(användare['namn']), användare
   anv = path.nil? ? Användare.hämta_med_namn(användare['namn']) : Användare.hämta_med_namn(path)
 
   slim :"konto/visa", locals: { user: anv }
@@ -192,6 +195,7 @@ end
 #
 # @param [String] titel
 # @param [Hash] punkter
+# @param [Array] taggar
 # @see Todo#skapa
 post '/todo' do
   params = JSON.parse(request.body.read)
@@ -199,8 +203,13 @@ post '/todo' do
 
   titel = params['titel']
   punkter = params['punkter']
+  taggar = params['taggar']
 
   resultat = Todo.skapa(titel, punkter, användare)
+
+  id = resultat[:id]
+
+  p params
 
   status 200
   redirect '/'
@@ -221,7 +230,10 @@ end
 # @see Todo#hämta
 # @see Todo#uppdatera
 post '/todo/:id/punkt/:punkt' do |id, punkt|
-  todo = Todo.hämta(id.to_i)
+  todo = Todo.hämta(id.to_i)[:todo]
+
+  p todo
+
   todo['punkter'][punkt.to_i]['klar'] = true
   Todo.uppdatera(id.to_i, todo['punkter'])
 
@@ -240,4 +252,49 @@ post '/todo/:id/radera' do |id|
 
   status 204
   redirect '/'
+end
+
+# 3.5 Lägg till tagg till todo
+#
+# @param [String] todo_id
+# @param [String] tagg_id
+post '/todo/:todo_id/tagg' do |todo_id|
+  tagg_id = params[:tagg_id].to_i
+
+  Todo.lägg_till_tagg(todo_id.to_i, tagg_id)
+  redirect '/'
+end
+
+# 4 Routes för taggar
+before '/taggar' do
+  redirect '/' unless auth? && användare['admin'] == 1
+end
+
+# 4.1 Visa alla taggar
+
+# Visar alla taggar
+#
+# @see Taggar#hämta_alla
+get '/taggar' do
+  taggar = Taggar.hämta_alla
+
+  slim :"taggar/alla", locals: { taggar: taggar }
+end
+
+# 4.2 Skapa en tagg
+#
+# @param [String] titel taggens namn
+post '/tagg' do
+  titel = params['titel']
+  Taggar.skapa_tagg(titel)
+
+  redirect '/taggar'
+end
+
+# 4.3 Radera en tagg
+#
+# @see Taggar#ta_bort
+post '/tagg/:id/radera' do |id|
+  Taggar.ta_bort(id.to_i)
+  redirect '/taggar'
 end

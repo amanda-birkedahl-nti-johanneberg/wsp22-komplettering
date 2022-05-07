@@ -12,8 +12,10 @@ module Todo
     return nil if todos.empty?
 
     todo = todos[0]
+    taggar = db.execute('SELECT titel FROM todo_taggar LEFT JOIN taggar ON tagg_id = id WHERE todo_id = ?', todo['id'])
+
     todo['punkter'] = JSON.parse(todo['punkter'])
-    todo
+    { todo: todo, taggar: taggar }
   end
 
   # Hämtar alla todo för en användare
@@ -23,8 +25,11 @@ module Todo
   # @return [Array<Hash>]
   def hämta_alla_för_användare(klara = false, anv)
     db.execute('SELECT * FROM todos WHERE user_id = ? and status = ?', anv['id'], klara ? 2 : 1).map do |todo|
+      taggar = db.execute('SELECT titel FROM todo_taggar LEFT JOIN taggar ON tagg_id = id WHERE todo_id = ?',
+                          todo['id'])
       todo['punkter'] = JSON.parse(todo['punkter'])
-      todo
+
+      { todo: todo, taggar: taggar }
     end
   end
 
@@ -35,7 +40,10 @@ module Todo
   # @param [Hash] anv Användaren
   def skapa(titel, punkter, anv)
     databas_punkter = JSON.generate(punkter)
-    db.execute('INSERT INTO TODOS (titel, punkter, user_id) values(?, ?, ?)', titel, databas_punkter, anv['id'])
+    transaktion = db
+    transaktion.execute('INSERT INTO TODOS (titel, punkter, user_id) values(?, ?, ?)', titel, databas_punkter,
+                        anv['id'])
+    { id: transaktion.last_insert_row_id }
   end
 
   # uppdaterar en TODO
@@ -73,5 +81,13 @@ module Todo
     return false if todos.empty?
 
     todos[0]['user_id'] == användare['id']
+  end
+
+  # Lägger till en existerande tagg
+  #
+  # @param [Integer] todo_id
+  # @param [Integer] tagg_id
+  def lägg_till_tagg(todo_id, tagg_id)
+    db.execute('INSERT INTO todo_taggar (todo_id, tagg_id) values (?, ?)', todo_id, tagg_id)
   end
 end

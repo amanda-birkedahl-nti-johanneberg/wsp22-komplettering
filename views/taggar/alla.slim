@@ -1,0 +1,14 @@
+main.sida#main-grid
+    section
+        h2 Alla taggar 
+        ul
+            - taggar.each do |tagg|
+                li.tagg-sak
+                    form action="/tagg/#{tagg['id']}/radera" method="post"
+                        button type="submit" Radera
+                    p = tagg["titel"]
+    section#todo-section
+        h2 Skapa ny tagg
+        form action="/tagg" method="post"
+            input#titel type="text" name="titel" required=true
+            input type="submit" value="Skapa"/

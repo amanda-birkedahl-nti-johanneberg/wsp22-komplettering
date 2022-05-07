@@ -5,7 +5,8 @@ const titel = document.getElementById("titel");
 
 const todo = {
   titel: "",
-  punkter: [],
+  punkter: [{ etikett: "", klar: false }],
+  taggar: [],
 };
 
 const raderaPunkt = (index) => () => {
@@ -32,10 +33,14 @@ const uppdateraPunktLista = (todo) => {
     const input = document.createElement("input");
     input.value = punkt.etikett;
     input.onchange = uppdateraPunkt(index);
+    input.placeholder = "Sak att göra";
+    input.required = true;
 
     const div = document.createElement("div");
     div.className = "point-row";
-    div.appendChild(raderaKnapp);
+    if (index > 0) {
+      div.appendChild(raderaKnapp);
+    }
     div.appendChild(input);
     punktList.appendChild(div);
   });
@@ -58,3 +63,5 @@ form.onsubmit = (e) => {
     window.location = "/";
   });
 };
+
+uppdateraPunktLista(todo);
