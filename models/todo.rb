@@ -12,7 +12,7 @@ module Todo
     return nil if todos.empty?
 
     todo = todos[0]
-    taggar = db.execute('SELECT titel FROM todo_taggar LEFT JOIN taggar ON tagg_id = id WHERE todo_id = ?', todo['id'])
+    taggar = db.execute('SELECT titel, id FROM todo_taggar LEFT JOIN taggar ON tagg_id = id WHERE todo_id = ?', todo['id'])
 
     todo['punkter'] = JSON.parse(todo['punkter'])
     { todo: todo, taggar: taggar }
@@ -89,5 +89,13 @@ module Todo
   # @param [Integer] tagg_id
   def lägg_till_tagg(todo_id, tagg_id)
     db.execute('INSERT INTO todo_taggar (todo_id, tagg_id) values (?, ?)', todo_id, tagg_id)
+  end
+
+  # tar bort en existerande tagg
+  #
+  # @param [Integer] todo
+  # @param [Integer] tagg
+  def ta_bort_tagg(todo, tagg)
+    db.execute('DELETE FROM todo_taggar WHERE todo_id = ? AND tagg_id = ?', todo, tagg)
   end
 end

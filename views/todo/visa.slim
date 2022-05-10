@@ -1,0 +1,18 @@
+main.sida
+    section
+        h1 Todo #{todo["titel"]}
+        section#taggar
+            - taggar.each do |tagg|
+                form.tagg action="/todo/#{todo['id']}/tagg/#{tagg['id']}" method="post"
+                    button type="submit"
+                        span #{tagg['titel']}
+                        i.material-icons delete
+        form action="/todo/#{todo["id"]}/radera" method="post" 
+            input type="submit" value="Radera todo"
+    section
+        form action="/todo/#{todo['id']}/tagg" method="post"
+            h3 Lägg till tagg
+            select name="tagg_id"
+                - lediga_taggar.each do |tagg|
+                    option value="#{tagg['id']}" #{tagg['titel']}
+            input type="submit" value="Lägg till tagg"/

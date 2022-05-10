@@ -12,7 +12,7 @@ form.formulär#todo-form action="/todo" method="post"
             - Taggar.hämta_alla.each do |tagg|
                 div
                     input type="checkbox" name="taggar" value="#{tagg['id']}"/
-                     label = tagg["titel"]
+                    label = tagg["titel"]
 
     input type="submit" value="Skapa"
 script src="/js/todo-form.js" 

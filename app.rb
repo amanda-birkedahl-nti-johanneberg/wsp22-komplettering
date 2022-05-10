@@ -32,6 +32,7 @@ enable :sessions
 # 3.2 Skapa todo
 # 3.3 Uppdatera punkt
 # 3.4 Raderar todo
+# 3.5 Radera tagg för todo
 # 4 Routes för taggar
 # 4.1 Visa alla taggar
 # 4.2 Skapa en tagg
@@ -184,7 +185,22 @@ end
 
 # 3. Routes för todos
 
+before '/todo/:id*' do |id, _splat|
+  return redirect '/logga-in' unless auth?
+
+  Todo.har_tillåtelse(id.to_i, användare)
+end
+
 # 3.1 Visa todo
+# @param [String] :id
+get '/todo/:id' do |id|
+  resultat = Todo.hämta(id.to_i)
+
+  slim :"404" if resultat.nil?
+  möjliga_taggar = Taggar.hämta_alla - resultat[:taggar]
+
+  slim :"todo/visa", locals: { todo: resultat[:todo], taggar: resultat[:taggar], lediga_taggar: möjliga_taggar }
+end
 
 # 3.2 Skapa todo
 before '/todo' do
@@ -215,12 +231,6 @@ post '/todo' do
   redirect '/'
 end
 
-before '/todo/:id/*' do |id, _splat|
-  return redirect '/logga-in' unless auth?
-
-  Todo.har_tillåtelse(id.to_i, användare)
-end
-
 # 3.3 Uppdatera punkt
 
 # Uppdaterar statusen på en punkt
@@ -242,6 +252,12 @@ end
 
 # 3.4 Raderar todo
 
+# 3.5 Radera tagg för todo
+post '/todo/:todo_id/tagg/:tagg_id' do |todo_id, tagg_id|
+  Todo.ta_bort_tagg(todo_id.to_i, tagg_id.to_i)
+  redirect '/'
+end
+
 # Radera en todo
 #
 # @param [String] id todons id
@@ -262,7 +278,7 @@ post '/todo/:todo_id/tagg' do |todo_id|
   tagg_id = params[:tagg_id].to_i
 
   Todo.lägg_till_tagg(todo_id.to_i, tagg_id)
-  redirect '/'
+  redirect "/todo/#{todo_id}"
 end
 
 # 4 Routes för taggar

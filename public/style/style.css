@@ -75,14 +75,14 @@ header {
 }
 
 .punkt-klar {
-    margin-left: 40px;
-    text-decoration: line-through;
+  margin-left: 40px;
+  text-decoration: line-through;
 }
 
 .todo-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .tagg-sak {
@@ -92,12 +92,31 @@ header {
 }
 
 .tagg-sak::before {
-  content: '*';
+  content: "*";
 }
 #taggar {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  margin: 1rem 0;
+}
 
+.tagg {
+  display: inline-flex;
+  padding: 4px;
+  background-color: rgba(255, 105, 180, 0.25);
+  color: rgba(255, 105, 180);
+  font-weight: bold;
+  align-items: center;
+  cursor: pointer;
+}
+
+.tagg button {
+  appearance: none;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: rgba(255, 105, 180);
+  font-weight: bold;
 }

@@ -11,13 +11,11 @@ main.sida#main-grid
                     - taggar = todo_data[:taggar]
                     article.todo
                         div.todo-actions
-                            h4 = todo["titel"]
-                            form action="/todo/#{todo["id"]}/radera" method="post" 
-                                input type="submit" value="Radera todo"
-                        
-                        div
+                            a href="/todo/#{todo['id']}"
+                                h4 = todo["titel"]          
+                        div#taggar
                             - taggar.each do |tagg|
-                                p = tagg["namn"]
+                                span.tagg = tagg["titel"]
                                 
                         - todo["punkter"].each_with_index do |punkt, index|
                             - if punkt["klar"]
