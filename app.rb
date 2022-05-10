@@ -79,10 +79,18 @@ post '/konto/logga-in' do
     return redirect '/logga-in'
   end
 
+  session[:attempts] = 0 if Time.new.to_i - session[:last_attempt].to_i > 300
+  if session[:attempts] > 5
+    session[:logga_in_fel] = 'För många försök. Försök igen senare.'
+    return redirect '/sign-in'
+  end
+
   resultat = Användare.logga_in(namn, lösenord)
 
   unless resultat[:error].nil?
     session[:logga_in_fel] = LOGGA_IN_FEL[:error]
+    session[:attempts] += 1
+    session[:last_attempt] = Time.new
 
     status 403
     return redirect '/logga-in'
@@ -91,6 +99,7 @@ post '/konto/logga-in' do
 
   session[:användare] = resultat[:user]
   session[:logga_in_fel] = nil
+  session[:attempts] = 0
 
   status 200
   redirect '/'
